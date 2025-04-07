@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CircleX, Heart } from 'lucide-react';
-import LoginModal from "../pages/Login"; // Import the LoginModal component
+import { CircleX, Heart, Share2 } from 'lucide-react';
+import LoginModal from "../pages/Login";
+import { Facebook, Twitter } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 
 const RecipeDetail: React.FC = () => {
     const navigate = useNavigate();
@@ -9,13 +11,13 @@ const RecipeDetail: React.FC = () => {
     const { title, cookingtime, calories, rating, image, ingredients, instructions } = location.state || {};
 
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [showShareOptions, setShowShareOptions] = useState(false);
 
     const isLoggedIn = () => {
         const user = localStorage.getItem('users');
         return user ? true : false;
     };
 
-    // Handles closing the login modal
     const closeLoginModal = () => {
         setIsLoginModalOpen(false);
     };
@@ -31,11 +33,49 @@ const RecipeDetail: React.FC = () => {
     };
 
     const handleHeartClick = () => {
-        if (isLoggedIn()) {
-            alert('Marked as favorite!');
-        } else {
+        if (!isLoggedIn()) {
             setIsLoginModalOpen(true);
+        } else {
+            alert('Marked as favorite!');
         }
+    };
+
+    const handleShare = (platform: string) => {
+        if (!isLoggedIn()) {
+            setIsLoginModalOpen(true);
+            return;
+        }
+
+        const url = window.location.href; // Get current page URL
+        const text = `${title} Recipe\nCooking Time: ${cookingtime}\nCalories: ${calories}\nRating: ${rating}\nIngredients: ${ingredients?.join(", ")}\nInstructions: ${instructions?.join(", ")}\n\n${url}`;
+
+        switch (platform) {
+            case 'Facebook':
+                window.open(
+                    `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+                    '_blank'
+                );
+                break;
+            case 'Twitter':
+                window.open(
+                    `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,
+                    '_blank'
+                );
+                break;
+            case 'WhatsApp':
+                window.open(
+                    `https://wa.me/?text=${encodeURIComponent(text)}`,
+                    '_blank'
+                );
+                break;
+            default:
+                alert('Invalid platform');
+                break;
+        }
+    };
+
+    const toggleShareOptions = () => {
+        setShowShareOptions(!showShareOptions);
     };
 
     return (
@@ -47,7 +87,7 @@ const RecipeDetail: React.FC = () => {
                         <img
                             src={image}
                             alt={title}
-                            className="w-40 h-40 object-cover rounded-full border-2 border-gray-300 mb-4"
+                            className="w-80 h-40 object-cover border-2 border-gray-300 mb-4"
                         />
                         <h2 className="text-2xl font-semibold text-gray-800 mb-2">{title}</h2>
                         <p className="text-sm text-gray-600">Cooking Time: {cookingtime}</p>
@@ -82,7 +122,7 @@ const RecipeDetail: React.FC = () => {
                             onClick={handleClose}
                             className="text-white bg-red-500 p-2 rounded-full hover:bg-red-600"
                         >
-                            <CircleX className="w-6 h-6" />
+                            <CircleX className="w-6 h-6"/>
                         </button>
 
                         {/* Heart Button */}
@@ -90,13 +130,47 @@ const RecipeDetail: React.FC = () => {
                             onClick={handleHeartClick}
                             className="text-red-500 bg-white p-2 rounded-full border-2 border-red-500 hover:bg-red-100"
                         >
-                            <Heart className="w-6 h-6" />
+                            <Heart className="w-6 h-6"/>
                         </button>
+
+                        {/* Share Button & Popup */}
+                        <div className="relative flex flex-col items-end space-y-2">
+                            <button
+                                onClick={toggleShareOptions}
+                                className="text-white bg-blue-500 p-2 rounded-full hover:bg-blue-600"
+                            >
+                                <Share2 className="w-6 h-6"/>
+                            </button>
+
+                            {showShareOptions && (
+                                <div className="absolute bg-white shadow-lg rounded-md px-4 py-2 space-y-2 z-50 top-[-350%] left-[-40%] transform -translate-x-1/2">
+                                    <p className="text-sm font-semibold text-gray-700">Share on:</p>
+                                    <button
+                                        onClick={() => handleShare('Facebook')}
+                                        className="flex items-center text-blue-600 hover:underline"
+                                    >
+                                        <Facebook className="mr-2 w-4 h-4"/> Facebook
+                                    </button>
+                                    <button
+                                        onClick={() => handleShare('Twitter')}
+                                        className="flex items-center text-blue-400 hover:underline"
+                                    >
+                                        <Twitter className="mr-2 w-4 h-4"/> Twitter
+                                    </button>
+                                    <button
+                                        onClick={() => handleShare('WhatsApp')}
+                                        className="flex items-center text-green-500 hover:underline"
+                                    >
+                                        <FaWhatsapp className="mr-2 w-4 h-4"/> WhatsApp
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {isLoginModalOpen && <LoginModal closeLoginModal={closeLoginModal} onLoginSuccess={onLoginSuccess} />}
+            {isLoginModalOpen && <LoginModal closeLoginModal={closeLoginModal} onLoginSuccess={onLoginSuccess}/>}
         </>
     );
 };
