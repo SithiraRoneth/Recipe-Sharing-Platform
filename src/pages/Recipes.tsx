@@ -45,7 +45,7 @@ const Recipes: React.FC = () => {
                     placeholder="Search for a recipe..."
                     value={searchQuery}
                     onChange={handleSearchChange}
-                    className="p-3 border border-gray-300 rounded-full w-1/2"
+                    className="p-3 border border-gray-300 rounded-full md:w-1/2 w-11/12"
                 />
             </div>
 
