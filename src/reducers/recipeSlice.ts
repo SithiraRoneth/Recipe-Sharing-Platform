@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Recipe } from '../model/Recipe'; // Ensure your Recipe interface is updated
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {Recipe} from '../model/Recipe';
 
 const initialState: Recipe[] = [];
 
@@ -9,6 +9,9 @@ const recipeSlice = createSlice({
     reducers: {
         addRecipe: (state, action: PayloadAction<Recipe>) => {
             state.push(action.payload);
+        },
+        setRecipes: (state, action) => {
+            return action.payload;
         },
         updateRecipe: (state, action: PayloadAction<Recipe>) => {
             const index = state.findIndex((recipe) => recipe.id === action.payload.id);
@@ -22,6 +25,6 @@ const recipeSlice = createSlice({
     },
 });
 
-export const { addRecipe, updateRecipe, deleteRecipe } = recipeSlice.actions;
+export const {addRecipe, updateRecipe, deleteRecipe, setRecipes} = recipeSlice.actions;
 
 export default recipeSlice.reducer;
