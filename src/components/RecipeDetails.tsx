@@ -8,7 +8,7 @@ import { FaWhatsapp } from 'react-icons/fa';
 const RecipeDetail: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { title, cookingtime, calories, rating, image, ingredients, instructions } = location.state || {};
+    const { title, cookingtime, calories, rating, image, ingredients, instructions,username } = location.state || {};
 
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [showShareOptions, setShowShareOptions] = useState(false);
@@ -47,7 +47,7 @@ const RecipeDetail: React.FC = () => {
         }
 
         const url = window.location.href; // Get current page URL
-        const text = `${title} Recipe\nCooking Time: ${cookingtime}\nCalories: ${calories}\nRating: ${rating}\nIngredients: ${ingredients?.join(", ")}\nInstructions: ${instructions?.join(", ")}\n\n${url}`;
+        const text = `${title} Recipe\nCooking Time: ${cookingtime}\nCalories: ${calories}\nRating: ${rating}\nIngredients: ${ingredients?.join(", ")}\nInstructions: ${instructions?.join(", ")}\n\nAuthor: ${username}`;
 
         switch (platform) {
             case 'Facebook':
@@ -93,6 +93,8 @@ const RecipeDetail: React.FC = () => {
                         <p className="text-sm text-gray-600">Cooking Time: {cookingtime}</p>
                         <p className="text-sm text-gray-600">Calories: {calories}</p>
                         <p className="text-sm text-yellow-600 font-medium">⭐ {rating}</p>
+                        <br/>
+                        <p className="text-sm text-gray-600">Author : {username}</p>
 
                         {/* Ingredients Section */}
                         <div className="mt-6 w-full overflow-y-auto h-[40vh] md:h-auto">
