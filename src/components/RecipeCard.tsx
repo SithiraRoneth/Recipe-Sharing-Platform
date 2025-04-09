@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface RecipeCardProps {
+export interface RecipeCardProps {
     id: string;
     title: string;
     cookingtime: string;
@@ -10,14 +10,15 @@ interface RecipeCardProps {
     image: string;
     ingredients: string[];
     instructions: string[];
+    username: string;
 }
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ id, title, cookingtime, calories, rating, image, ingredients, instructions }) => {
+const RecipeCard: React.FC<RecipeCardProps> = ({ id, title, cookingtime, calories, rating, image, ingredients, instructions,username }) => {
     const navigate = useNavigate();
 
     const handleCardClick = () => {
         navigate(`/recipe/${id}`, {
-            state: { title, cookingtime, calories, rating, image, ingredients, instructions } // Pass ingredients and instructions
+            state: { title, cookingtime, calories, rating, image, ingredients, instructions,username } // Pass ingredients and instructions
         });
     };
 
@@ -26,12 +27,13 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ id, title, cookingtime, calorie
             className="bg-white shadow-lg rounded-2xl overflow-hidden flex items-center justify-between p-4 transition-transform hover:scale-105 duration-300 cursor-pointer"
             onClick={handleCardClick}
         >
-            {/* Left Side: Details */}
             <div className="flex-1 pr-4">
                 <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
                 <p className="text-sm text-gray-600 mt-2">Cooking Time: {cookingtime}</p>
                 <p className="text-sm text-gray-600">Calories: {calories}</p>
                 <p className="text-sm text-yellow-600 font-medium">⭐ {rating}</p>
+                <br/>
+                <p className="text-sm text-gray-600 font-bold">Author : {username}</p>
             </div>
 
             {/* Right Side: Image */}
