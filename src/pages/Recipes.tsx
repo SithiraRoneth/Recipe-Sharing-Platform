@@ -12,6 +12,7 @@ interface Recipe {
     image: string;
     ingredients: string[];
     instructions: string[];
+    username:string;
 }
 
 const Recipes: React.FC = () => {
@@ -33,9 +34,19 @@ const Recipes: React.FC = () => {
         setSearchQuery(event.target.value);
     };
 
-    const filteredRecipes = recipes.filter((recipe) =>
-        recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredRecipes = recipes.filter((recipe) => {
+        const query = searchQuery.toLowerCase();
+
+        return (
+            recipe.title.toLowerCase().includes(query) ||
+            recipe.cookingtime.toLowerCase().includes(query) ||
+            recipe.username.toLowerCase().includes(query) ||
+            recipe.ingredients.some((ingredient) =>
+                ingredient.toLowerCase().includes(query)
+            )
+        );
+    });
+
 
     return (
         <div className="container mx-auto p-12 mt-24">
@@ -71,6 +82,7 @@ const Recipes: React.FC = () => {
                                 image={recipe.image}
                                 ingredients={recipe.ingredients}
                                 instructions={recipe.instructions}
+                                username={recipe.username}
                             />
                         </motion.div>
                     ))
