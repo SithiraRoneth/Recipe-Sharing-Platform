@@ -4,8 +4,8 @@ import {loginAPI} from "../api/ApiUrl.tsx";
 import Swal from 'sweetalert2';
 
 const LoginModal = ({closeLoginModal, openSignupModal, onLoginSuccess}: any) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+        const [username, setUsername] = useState('');
+        const [password, setPassword] = useState('');
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
