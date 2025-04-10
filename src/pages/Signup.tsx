@@ -1,33 +1,36 @@
-import { useState } from 'react';
-import { CircleX } from 'lucide-react';
+import {useState} from 'react';
+import {CircleX} from 'lucide-react';
+import {useDispatch} from "react-redux";
+import {signup} from "../reducers/authSlice.ts";
+import Swal from "sweetalert2";
 
-const signupAPI = "https://67f29b43ec56ec1a36d3a01c.mockapi.io/users";
 
-const SignupModal = ({ closeSignupModal, openLoginModal }: any) => {
+const SignupModal = ({closeSignupModal, openLoginModal}: any) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const dispatch = useDispatch();
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
-            const response = await fetch(signupAPI, {
-                method: 'POST',
-                body: JSON.stringify({ username, email, password }),
-                headers: { 'Content-Type': 'application/json' },
+            await dispatch(signup({username, email, password})).unwrap();
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Signup successful!',
+                showConfirmButton: false,
+                timer: 1500,
             });
-
-            const data = await response.json();
-
-            if (data) {
-                alert('Signup successful!');
-                closeSignupModal();
-            } else {
-                alert('Error during signup');
-            }
+            closeSignupModal();
         } catch (error) {
-            alert('Error during signup');
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error during signup',
+                showConfirmButton: true,
+            });
         }
     };
 
@@ -68,13 +71,16 @@ const SignupModal = ({ closeSignupModal, openLoginModal }: any) => {
                     </div>
                     <button type="submit" className="w-full px-4 py-2 bg-black text-white rounded-lg">Signup</button>
                     <p className='mt-4'>Already have an account?
-                        <button onClick={() => { closeSignupModal(); openLoginModal(); }} className='text-blue-700 ml-3'>
+                        <button onClick={() => {
+                            closeSignupModal();
+                            openLoginModal();
+                        }} className='text-blue-700 ml-3'>
                             Login
                         </button>
                     </p>
                 </form>
                 <button onClick={closeSignupModal} className="absolute top-2 right-2 text-gray-500">
-                    <CircleX />
+                    <CircleX/>
                 </button>
             </div>
         </div>
