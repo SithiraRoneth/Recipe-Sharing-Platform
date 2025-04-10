@@ -23,7 +23,8 @@ const Recipes: React.FC = () => {
         axios
             .get('https://67f29b43ec56ec1a36d3a01c.mockapi.io/recipes')
             .then((response) => {
-                setRecipes(response.data);
+                const sortedRecipes = response.data.sort((a, b) => b.id - a.id);
+                setRecipes(sortedRecipes);
             })
             .catch((error) => {
                 console.error('Error fetching recipes:', error);
