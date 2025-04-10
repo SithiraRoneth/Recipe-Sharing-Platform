@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import {
     Card,
     CardContent,
@@ -9,11 +9,10 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    TextField
+    TextField, FormControlLabel, Checkbox
 } from "@mui/material";
-import {useDispatch} from "react-redux";
-import axios from "axios";
-import {updateRecipe, deleteRecipe} from "../../reducers/recipeSlice.ts";
+import { useDispatch } from "react-redux";
+import { updateRecipe, deleteRecipe } from "../../reducers/recipeSlice.ts";
 import Swal from "sweetalert2";
 
 export interface RecipeType {
@@ -23,8 +22,9 @@ export interface RecipeType {
     calories: string;
     rating: string;
     image: string;
-    ingredients: string;
-    instructions: string;
+    ingredients: string[];
+    instructions: string[];
+    dietaryRestrictions: string[];
     username: string;
 }
 
@@ -37,6 +37,7 @@ const UserRecipeCard: React.FC<RecipeType> = ({
                                                   image,
                                                   ingredients,
                                                   instructions,
+                                                  dietaryRestrictions = [],
                                                   username
                                               }) => {
     const [open, setOpen] = useState(false);
@@ -47,8 +48,9 @@ const UserRecipeCard: React.FC<RecipeType> = ({
     const [editCalories, setEditCalories] = useState(calories);
     const [editRating, setEditRating] = useState(rating);
     const [editImage, setEditImage] = useState(image);
-    const [editIngredients, setEditIngredients] = useState(ingredients);
-    const [editInstructions, setEditInstructions] = useState(instructions);
+    const [editIngredients, setEditIngredients] = useState<string[]>(ingredients);
+    const [editInstructions, setEditInstructions] = useState<string[]>(instructions);
+    const [editDietaryRestrictions, setEditDietaryRestrictions] = useState<string[]>(dietaryRestrictions); // Initialized with dietaryRestrictions
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -63,11 +65,11 @@ const UserRecipeCard: React.FC<RecipeType> = ({
             image: editImage,
             ingredients: editIngredients,
             instructions: editInstructions,
-            username,
+            dietaryRestrictions: editDietaryRestrictions,
+            username
         };
 
         try {
-            // Dispatch the async thunk for updating the recipe
             const actionResult = await dispatch(updateRecipe(updatedRecipe));
 
             if (updateRecipe.fulfilled.match(actionResult)) {
@@ -76,7 +78,7 @@ const UserRecipeCard: React.FC<RecipeType> = ({
                     icon: "success",
                     title: "Recipe Updated",
                     showConfirmButton: false,
-                    timer: 1500,
+                    timer: 1500
                 });
                 handleClose();
             } else {
@@ -85,7 +87,7 @@ const UserRecipeCard: React.FC<RecipeType> = ({
                     icon: "error",
                     title: "Failed to Update Recipe",
                     showConfirmButton: false,
-                    timer: 1500,
+                    timer: 1500
                 });
             }
         } catch (error) {
@@ -93,7 +95,6 @@ const UserRecipeCard: React.FC<RecipeType> = ({
             alert("Failed to update recipe.");
         }
     };
-
 
     const handleDelete = async () => {
         try {
@@ -105,7 +106,7 @@ const UserRecipeCard: React.FC<RecipeType> = ({
                     icon: "success",
                     title: "Recipe Deleted",
                     showConfirmButton: false,
-                    timer: 1500,
+                    timer: 1500
                 });
                 handleClose();
             } else {
@@ -114,7 +115,7 @@ const UserRecipeCard: React.FC<RecipeType> = ({
                     icon: "error",
                     title: "Failed to Delete Recipe",
                     showConfirmButton: false,
-                    timer: 1500,
+                    timer: 1500
                 });
             }
         } catch (error) {
@@ -123,46 +124,146 @@ const UserRecipeCard: React.FC<RecipeType> = ({
         }
     };
 
+    const handleIngredientsChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        const updatedIngredients = [...editIngredients];
+        updatedIngredients[index] = e.target.value;
+        setEditIngredients(updatedIngredients);
+    };
+
+    const handleInstructionsChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        const updatedInstructions = [...editInstructions];
+        updatedInstructions[index] = e.target.value;
+        setEditInstructions(updatedInstructions);
+    };
+
+    const handleDietaryRestrictionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setEditDietaryRestrictions((prevSelected) =>
+            prevSelected.includes(value)
+                ? prevSelected.filter((restriction) => restriction !== value)
+                : [...prevSelected, value]
+        );
+    };
+
+    const dietaryOptions = [
+        { label: "Vegan", value: "vegan" },
+        { label: "Gluten-Free", value: "gluten-free" },
+        { label: "Dairy-Free", value: "dairy-free" },
+    ];
 
     return (
         <>
-            <Card sx={{maxWidth: 345, cursor: "pointer"}} onClick={handleOpen}>
-                <CardMedia sx={{height: 140}} image={image} title={title}/>
+            <Card sx={{ maxWidth: 345, cursor: "pointer" }} onClick={handleOpen}>
+                <CardMedia sx={{ height: 140 }} image={image} title={title} />
                 <CardContent>
-                    <Typography gutterBottom variant="h5">{title}</Typography>
+                    <Typography gutterBottom variant="h5">
+                        {title}
+                    </Typography>
                 </CardContent>
             </Card>
 
-            <Dialog
-                open={open}
-                onClose={handleClose}
-                maxWidth="md"
-                fullWidth
-            >
+            <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
                 <DialogTitle>Edit Recipe</DialogTitle>
-                <DialogContent sx={{display: "flex", flexDirection: "column", gap: 2}}>
-                    <TextField label="Title" fullWidth value={editTitle}
-                               onChange={(e) => setEditTitle(e.target.value)}/>
-                    <TextField label="Cooking Time" fullWidth value={editCookingTime}
-                               onChange={(e) => setEditCookingTime(e.target.value)}/>
-                    <TextField label="Calories" fullWidth value={editCalories}
-                               onChange={(e) => setEditCalories(e.target.value)}/>
-                    <TextField label="Rating" fullWidth value={editRating}
-                               onChange={(e) => setEditRating(e.target.value)}/>
-                    <TextField label="Image URL" fullWidth value={editImage}
-                               onChange={(e) => setEditImage(e.target.value)}/>
-                    <TextField label="Ingredients" fullWidth multiline rows={2} value={editIngredients}
-                               onChange={(e) => setEditIngredients(e.target.value)}/>
-                    <TextField label="Instructions" fullWidth multiline rows={3} value={editInstructions}
-                               onChange={(e) => setEditInstructions(e.target.value)}/>
+                <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <TextField
+                        label="Title"
+                        fullWidth
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                    />
+                    <TextField
+                        label="Cooking Time"
+                        fullWidth
+                        value={editCookingTime}
+                        onChange={(e) => setEditCookingTime(e.target.value)}
+                    />
+                    <TextField
+                        label="Calories"
+                        fullWidth
+                        value={editCalories}
+                        onChange={(e) => setEditCalories(e.target.value)}
+                    />
+                    <TextField
+                        label="Rating"
+                        fullWidth
+                        value={editRating}
+                        onChange={(e) => setEditRating(e.target.value)}
+                    />
+                    <TextField
+                        label="Image URL"
+                        fullWidth
+                        value={editImage}
+                        onChange={(e) => setEditImage(e.target.value)}
+                    />
+                    <div>
+                        <h3 className="font-medium mb-2">Ingredients:</h3>
+                        {editIngredients.map((ingredient, index) => (
+                            <input
+                                key={index}
+                                type="text"
+                                value={ingredient}
+                                onChange={(e) => handleIngredientsChange(e, index)}
+                                placeholder={`Ingredient ${index + 1}`}
+                                className="w-full border border-gray-300 rounded px-4 py-2 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            />
+                        ))}
+                        <button
+                            type="button"
+                            onClick={() => setEditIngredients([...editIngredients, ""])}
+                            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
+                        >
+                            + Add Ingredient
+                        </button>
+                    </div>
+
+                    <div>
+                        <h3 className="font-medium mb-2">Instructions:</h3>
+                        {editInstructions.map((instruction, index) => (
+                            <input
+                                key={index}
+                                type="text"
+                                value={instruction}
+                                onChange={(e) => handleInstructionsChange(e, index)}
+                                placeholder={`Instruction ${index + 1}`}
+                                className="w-full border border-gray-300 rounded px-4 py-2 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            />
+                        ))}
+                        <button
+                            type="button"
+                            onClick={() => setEditInstructions([...editInstructions, ""])}
+                            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
+                        >
+                            + Add Instruction
+                        </button>
+                    </div>
+
+                    <div>
+                        <h3 className="font-medium mb-2">Dietary Restrictions:</h3>
+                        {dietaryOptions.map((option) => (
+                            <FormControlLabel
+                                key={option.value}
+                                control={
+                                    <Checkbox
+                                        value={option.value}
+                                        onChange={handleDietaryRestrictionChange}
+                                        checked={editDietaryRestrictions.includes(option.value)} // Use includes safely
+                                    />
+                                }
+                                label={option.label}
+                            />
+                        ))}
+                    </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDelete} color="error">Delete</Button>
+                    <Button onClick={handleDelete} color="error">
+                        Delete
+                    </Button>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleUpdate} variant="contained">Update</Button>
+                    <Button onClick={handleUpdate} variant="contained">
+                        Update
+                    </Button>
                 </DialogActions>
             </Dialog>
-
         </>
     );
 };
