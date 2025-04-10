@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {
     Card,
     CardContent,
@@ -11,10 +11,11 @@ import {
     DialogActions,
     TextField
 } from "@mui/material";
-import { useDispatch } from "react-redux";
+import {useDispatch} from "react-redux";
 import axios from "axios";
-import { updateRecipe, deleteRecipe } from "../../reducers/recipeSlice.ts";
-// import { RecipeType } from "../../model/Recipe.ts";
+import {updateRecipe, deleteRecipe} from "../../reducers/recipeSlice.ts";
+import Swal from "sweetalert2";
+
 export interface RecipeType {
     id: string;
     title: string;
@@ -26,6 +27,7 @@ export interface RecipeType {
     instructions: string;
     username: string;
 }
+
 const UserRecipeCard: React.FC<RecipeType> = ({
                                                   id,
                                                   title,
@@ -70,7 +72,13 @@ const UserRecipeCard: React.FC<RecipeType> = ({
                 updatedRecipe
             );
             dispatch(updateRecipe(response.data));
-            alert("Recipe updated!");
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Recipe Updated",
+                showConfirmButton: false,
+                timer: 1500
+            });
             handleClose();
         } catch (error) {
             console.error("Failed to update recipe:", error);
@@ -82,7 +90,13 @@ const UserRecipeCard: React.FC<RecipeType> = ({
         try {
             await axios.delete(`https://67f29b43ec56ec1a36d3a01c.mockapi.io/recipes/${id}`);
             dispatch(deleteRecipe(id));
-            alert("Recipe deleted!");
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Recipe Deleted",
+                showConfirmButton: false,
+                timer: 1500
+            });
             handleClose();
         } catch (error) {
             console.error("Failed to delete recipe:", error);
@@ -92,23 +106,35 @@ const UserRecipeCard: React.FC<RecipeType> = ({
 
     return (
         <>
-            <Card sx={{ maxWidth: 345, cursor: "pointer" }} onClick={handleOpen}>
-                <CardMedia sx={{ height: 140 }} image={image} title={title} />
+            <Card sx={{maxWidth: 345, cursor: "pointer"}} onClick={handleOpen}>
+                <CardMedia sx={{height: 140}} image={image} title={title}/>
                 <CardContent>
                     <Typography gutterBottom variant="h5">{title}</Typography>
                 </CardContent>
             </Card>
 
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                maxWidth="md"
+                fullWidth
+            >
                 <DialogTitle>Edit Recipe</DialogTitle>
-                <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    <TextField label="Title" fullWidth value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
-                    <TextField label="Cooking Time" fullWidth value={editCookingTime} onChange={(e) => setEditCookingTime(e.target.value)} />
-                    <TextField label="Calories" fullWidth value={editCalories} onChange={(e) => setEditCalories(e.target.value)} />
-                    <TextField label="Rating" fullWidth value={editRating} onChange={(e) => setEditRating(e.target.value)} />
-                    <TextField label="Image URL" fullWidth value={editImage} onChange={(e) => setEditImage(e.target.value)} />
-                    <TextField label="Ingredients" fullWidth multiline rows={2} value={editIngredients} onChange={(e) => setEditIngredients(e.target.value)} />
-                    <TextField label="Instructions" fullWidth multiline rows={3} value={editInstructions} onChange={(e) => setEditInstructions(e.target.value)} />
+                <DialogContent sx={{display: "flex", flexDirection: "column", gap: 2}}>
+                    <TextField label="Title" fullWidth value={editTitle}
+                               onChange={(e) => setEditTitle(e.target.value)}/>
+                    <TextField label="Cooking Time" fullWidth value={editCookingTime}
+                               onChange={(e) => setEditCookingTime(e.target.value)}/>
+                    <TextField label="Calories" fullWidth value={editCalories}
+                               onChange={(e) => setEditCalories(e.target.value)}/>
+                    <TextField label="Rating" fullWidth value={editRating}
+                               onChange={(e) => setEditRating(e.target.value)}/>
+                    <TextField label="Image URL" fullWidth value={editImage}
+                               onChange={(e) => setEditImage(e.target.value)}/>
+                    <TextField label="Ingredients" fullWidth multiline rows={2} value={editIngredients}
+                               onChange={(e) => setEditIngredients(e.target.value)}/>
+                    <TextField label="Instructions" fullWidth multiline rows={3} value={editInstructions}
+                               onChange={(e) => setEditInstructions(e.target.value)}/>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDelete} color="error">Delete</Button>
@@ -116,6 +142,7 @@ const UserRecipeCard: React.FC<RecipeType> = ({
                     <Button onClick={handleUpdate} variant="contained">Update</Button>
                 </DialogActions>
             </Dialog>
+
         </>
     );
 };
