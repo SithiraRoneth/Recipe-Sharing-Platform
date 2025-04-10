@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { addRecipe } from '../../reducers/recipeSlice.ts';
 import axios from 'axios';
+import Swal from "sweetalert2";
 
 const AddRecipe = () => {
     const [title, setTitle] = useState('');
@@ -40,7 +41,13 @@ const AddRecipe = () => {
             const response = await axios.post('https://67f29b43ec56ec1a36d3a01c.mockapi.io/recipes', newRecipe);
             dispatch(addRecipe(response.data));
 
-            alert('Recipe added!');
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Recipe Added",
+                showConfirmButton: false,
+                timer: 1500
+            });
             setIsModalOpen(false);
         } catch (error) {
             console.error('Error details:', error);
