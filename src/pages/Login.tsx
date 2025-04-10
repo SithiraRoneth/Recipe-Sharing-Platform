@@ -20,6 +20,7 @@ const LoginModal = ({closeLoginModal, openSignupModal, onLoginSuccess}: any) => 
 
             if (user) {
                 localStorage.setItem('users', user.username);
+                localStorage.setItem('password', user.password);
                 Swal.fire({
                     title: "Login Success",
                     icon: "success"
