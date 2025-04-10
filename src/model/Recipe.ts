@@ -8,4 +8,5 @@ export interface Recipe {
     ingredients: string;
     instructions: string;
     username: string;
+    dietaryRestrictions: string[];
 }
