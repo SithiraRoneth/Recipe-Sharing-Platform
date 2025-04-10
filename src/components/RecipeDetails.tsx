@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { CircleX, Heart, Share2 } from 'lucide-react';
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useLocation} from 'react-router-dom';
+import {CircleX, Heart, Share2} from 'lucide-react';
 import LoginModal from "../pages/Login";
-import { Facebook, Twitter } from 'lucide-react';
-import { FaWhatsapp } from 'react-icons/fa';
+import {Facebook, Twitter} from 'lucide-react';
+import {FaWhatsapp} from 'react-icons/fa';
 
 const RecipeDetail: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { title, cookingtime, calories, rating, image, ingredients, instructions,username } = location.state || {};
+    const {title, cookingtime, calories, rating, image, ingredients, instructions, username} = location.state || {};
 
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [showShareOptions, setShowShareOptions] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);
+
 
     const isLoggedIn = () => {
         const user = localStorage.getItem('users');
@@ -31,14 +33,38 @@ const RecipeDetail: React.FC = () => {
     const handleClose = () => {
         navigate(-1);
     };
+    useEffect(() => {
+        const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes') || '[]');
+        const alreadyFavorite = favoriteRecipes.some(
+            (recipe: any) => recipe.title === location.state?.title
+        );
+        setIsFavorite(alreadyFavorite);
+    }, [location.state]);
+
 
     const handleHeartClick = () => {
         if (!isLoggedIn()) {
             setIsLoginModalOpen(true);
         } else {
-            alert('Marked as favorite!');
+            const recipeToSave = location.state;
+            const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes') || '[]');
+
+            const isAlreadyFavorite = favoriteRecipes.some(
+                (recipe: any) => recipe.title === recipeToSave.title
+            );
+
+            if (!isAlreadyFavorite) {
+                const updatedFavorites = [...favoriteRecipes, recipeToSave];
+                localStorage.setItem('favoriteRecipes', JSON.stringify(updatedFavorites));
+                setIsFavorite(true); // Update state
+                alert('Marked as favorite!');
+            } else {
+                alert('This recipe is already in your favorites.');
+            }
         }
     };
+
+
 
     const handleShare = (platform: string) => {
         if (!isLoggedIn()) {
@@ -81,7 +107,8 @@ const RecipeDetail: React.FC = () => {
     return (
         <>
             <div className="max-w-6xl mx-auto p-6 mt-20 md:h-[88vh] overflow-hidden">
-                <div className="relative grid grid-cols-1 md:grid-cols-2 gap-6 bg-white shadow-lg rounded-2xl overflow-hidden p-6 h-full">
+                <div
+                    className="relative grid grid-cols-1 md:grid-cols-2 gap-6 bg-white shadow-lg rounded-2xl overflow-hidden p-6 h-full">
                     {/* Left Column: Image, Recipe Details, Ingredients */}
                     <div className="flex flex-col items-center md:items-start">
                         <img
@@ -132,8 +159,13 @@ const RecipeDetail: React.FC = () => {
                             onClick={handleHeartClick}
                             className="text-red-500 bg-white p-2 rounded-full border-2 border-red-500 hover:bg-red-100"
                         >
-                            <Heart className="w-6 h-6"/>
+                            {isFavorite ? (
+                                <Heart fill="red" className="w-6 h-6"/> // Filled heart
+                            ) : (
+                                <Heart className="w-6 h-6"/> // Regular heart
+                            )}
                         </button>
+
 
                         {/* Share Button & Popup */}
                         <div className="relative flex flex-col items-end space-y-2">
@@ -145,7 +177,8 @@ const RecipeDetail: React.FC = () => {
                             </button>
 
                             {showShareOptions && (
-                                <div className="absolute bg-white shadow-lg rounded-md px-4 py-2 space-y-2 z-50 top-[-350%] left-[-40%] transform -translate-x-1/2">
+                                <div
+                                    className="absolute bg-white shadow-lg rounded-md px-4 py-2 space-y-2 z-50 top-[-350%] left-[-40%] transform -translate-x-1/2">
                                     <p className="text-sm font-semibold text-gray-700">Share on:</p>
                                     <button
                                         onClick={() => handleShare('Facebook')}
