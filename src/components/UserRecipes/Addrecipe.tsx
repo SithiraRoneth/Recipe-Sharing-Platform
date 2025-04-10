@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { addRecipe } from '../../reducers/recipeSlice.ts';
-import axios from 'axios';
 import Swal from "sweetalert2";
 
 const AddRecipe = () => {
@@ -37,9 +36,7 @@ const AddRecipe = () => {
                 instructions,
                 username,
             };
-
-            const response = await axios.post('https://67f29b43ec56ec1a36d3a01c.mockapi.io/recipes', newRecipe);
-            dispatch(addRecipe(response.data));
+            await dispatch(addRecipe(newRecipe));
 
             Swal.fire({
                 position: "top-end",
