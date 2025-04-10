@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {CircleX} from 'lucide-react';
-import {loginAPI} from "../api/ApiUrl.tsx";
 import Swal from 'sweetalert2';
+import axios from "axios";
 
 const LoginModal = ({closeLoginModal, openSignupModal, onLoginSuccess}: any) => {
         const [username, setUsername] = useState('');
@@ -11,8 +11,8 @@ const LoginModal = ({closeLoginModal, openSignupModal, onLoginSuccess}: any) => 
         e.preventDefault();
 
         try {
-            const response = await fetch(loginAPI);
-            const users = await response.json();
+            const response = await axios.get('https://67f29b43ec56ec1a36d3a01c.mockapi.io/users');
+            const users = await response.data;
 
             const user = users.find(
                 (user: any) => user.username === username && user.password === password
