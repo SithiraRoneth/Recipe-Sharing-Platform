@@ -63,46 +63,66 @@ const UserRecipeCard: React.FC<RecipeType> = ({
             image: editImage,
             ingredients: editIngredients,
             instructions: editInstructions,
-            username
+            username,
         };
 
         try {
-            const response = await axios.put(
-                `https://67f29b43ec56ec1a36d3a01c.mockapi.io/recipes/${id}`,
-                updatedRecipe
-            );
-            dispatch(updateRecipe(response.data));
-            Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: "Recipe Updated",
-                showConfirmButton: false,
-                timer: 1500
-            });
-            handleClose();
+            // Dispatch the async thunk for updating the recipe
+            const actionResult = await dispatch(updateRecipe(updatedRecipe));
+
+            if (updateRecipe.fulfilled.match(actionResult)) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Recipe Updated",
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+                handleClose();
+            } else {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: "Failed to Update Recipe",
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+            }
         } catch (error) {
             console.error("Failed to update recipe:", error);
             alert("Failed to update recipe.");
         }
     };
 
+
     const handleDelete = async () => {
         try {
-            await axios.delete(`https://67f29b43ec56ec1a36d3a01c.mockapi.io/recipes/${id}`);
-            dispatch(deleteRecipe(id));
-            Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: "Recipe Deleted",
-                showConfirmButton: false,
-                timer: 1500
-            });
-            handleClose();
+            const actionResult = await dispatch(deleteRecipe(id));
+
+            if (deleteRecipe.fulfilled.match(actionResult)) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Recipe Deleted",
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+                handleClose();
+            } else {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: "Failed to Delete Recipe",
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+            }
         } catch (error) {
             console.error("Failed to delete recipe:", error);
             alert("Failed to delete recipe.");
         }
     };
+
 
     return (
         <>
