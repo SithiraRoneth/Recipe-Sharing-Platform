@@ -151,16 +151,16 @@ const RecipeDetail: React.FC = () => {
                             onClick={handleClose}
                             className="text-white bg-red-500 p-2 rounded-full hover:bg-red-600"
                         >
-                            <CircleX className="w-6 h-6"/>
+                            <CircleX className="w-7 h-6"/>
                         </button>
 
                         {/* Heart Button */}
                         <button
                             onClick={handleHeartClick}
-                            className="text-red-500 bg-white p-2 rounded-full border-2 border-red-500 hover:bg-red-100"
+                            className="text-red-500 bg-white p-2 rounded-full border-2 border-white hover:bg-red-100"
                         >
                             {isFavorite ? (
-                                <Heart fill="red" className="w-6 h-6"/> // Filled heart
+                                <Heart fill="red" className="w-6 h-6"/>
                             ) : (
                                 <Heart className="w-6 h-6"/> // Regular heart
                             )}
