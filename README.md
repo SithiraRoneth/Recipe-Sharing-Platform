@@ -21,7 +21,6 @@ Flavor Exchange is a user-friendly recipe sharing platform built with **React**,
 ## 📸 Screenshots
 
 ![Home](src/assets/home.png) 
-![RecipeList](src/assets/recipeList.png)
 
 ## 🧑‍🍳 Getting Started
 
