@@ -13,6 +13,7 @@ const AddRecipe = () => {
     const [instructions, setInstructions] = useState<string[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [username, setUsername] = useState('');
+    const [selectedDietaryRestrictions, setSelectedDietaryRestrictions] = useState<string[]>([]);
 
     const dispatch = useDispatch();
 
@@ -22,6 +23,21 @@ const AddRecipe = () => {
             setUsername(storedUsername);
         }
     }, []);
+
+    const dietaryOptions = [
+        { label: 'Vegan', value: 'vegan' },
+        { label: 'Gluten-Free', value: 'gluten-free' },
+        { label: 'Dairy-Free', value: 'dairy-free' },
+    ];
+
+    const handleDietaryFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setSelectedDietaryRestrictions((prevSelected) =>
+            prevSelected.includes(value)
+                ? prevSelected.filter((restriction) => restriction !== value)
+                : [...prevSelected, value]
+        );
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -35,6 +51,7 @@ const AddRecipe = () => {
                 ingredients,
                 instructions,
                 username,
+                dietaryRestrictions: selectedDietaryRestrictions,
             };
             await dispatch(addRecipe(newRecipe));
 
@@ -136,6 +153,23 @@ const AddRecipe = () => {
                                 >
                                     + Add Instruction
                                 </button>
+                            </div>
+
+                            {/* Dietary Restrictions Section */}
+                            <div>
+                                <h3 className="font-medium mb-2">Dietary Restrictions:</h3>
+                                {dietaryOptions.map((option) => (
+                                    <label key={option.value} className="flex items-center space-x-2 mb-2">
+                                        <input
+                                            type="checkbox"
+                                            value={option.value}
+                                            onChange={handleDietaryFilterChange}
+                                            checked={selectedDietaryRestrictions.includes(option.value)}
+                                            className="w-4 h-4"
+                                        />
+                                        <span>{option.label}</span>
+                                    </label>
+                                ))}
                             </div>
 
                             <div className="flex justify-between pt-4">
