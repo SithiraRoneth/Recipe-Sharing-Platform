@@ -26,4 +26,4 @@ Flavor Exchange is a user-friendly recipe sharing platform built with **React**,
 
 1. **Clone the repository**
    ```bash
-   [https://github.com/yourusername/flavor-exchange.git]
+   https://github.com/SithiraRoneth/Recipe-Sharing-Platform.git
