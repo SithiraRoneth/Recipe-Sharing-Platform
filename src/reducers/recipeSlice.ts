@@ -22,9 +22,15 @@ const recipeSlice = createSlice({
         deleteRecipe: (state, action: PayloadAction<string>) => {
             return state.filter((recipe) => recipe.id !== action.payload);
         },
+        addFavorite: (state, action: PayloadAction<Recipe>) => {
+            state.push(action.payload);
+        },
+        removeFavorite: (state, action: PayloadAction<string>) => {
+            return state.filter((recipe) => recipe.id !== action.payload);
+        },
     },
 });
 
-export const {addRecipe, updateRecipe, deleteRecipe, setRecipes} = recipeSlice.actions;
+export const {addRecipe, updateRecipe, deleteRecipe, setRecipes,addFavorite,removeFavorite} = recipeSlice.actions;
 
 export default recipeSlice.reducer;
