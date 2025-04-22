@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import { motion } from 'framer-motion';
+import {motion} from 'framer-motion';
 import RecipeCard from '../components/RecipeCard.tsx';
 
 interface Recipe {
@@ -47,9 +47,9 @@ const Recipes: React.FC = () => {
     };
 
     const dietaryOptions = [
-        { label: 'Vegan', value: 'vegan' },
-        { label: 'Gluten-Free', value: 'gluten-free' },
-        { label: 'Dairy-Free', value: 'dairy-free' },
+        {label: 'Vegan', value: 'vegan'},
+        {label: 'Gluten-Free', value: 'gluten-free'},
+        {label: 'Dairy-Free', value: 'dairy-free'},
     ];
 
     const filteredRecipes = recipes.filter((recipe) => {
@@ -71,6 +71,8 @@ const Recipes: React.FC = () => {
             (recipe.title.toLowerCase().includes(query) ||
                 recipe.cookingtime.toLowerCase().includes(query) ||
                 recipe.username.toLowerCase().includes(query) ||
+                recipe.calories.toLowerCase().includes(query) ||
+                recipe.cookingtime.toLowerCase().includes(query) ||
                 recipe.ingredients.some((ingredient) =>
                     ingredient.toLowerCase().includes(query)
                 ))
@@ -112,10 +114,10 @@ const Recipes: React.FC = () => {
                     filteredRecipes.map((recipe) => (
                         <motion.div
                             key={recipe.id}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, ease: 'easeOut' }}
-                            viewport={{ once: true }}
+                            initial={{opacity: 0, y: 30}}
+                            whileInView={{opacity: 1, y: 0}}
+                            transition={{duration: 0.6, ease: 'easeOut'}}
+                            viewport={{once: true}}
                             className="recipe-card"
                         >
                             <RecipeCard
