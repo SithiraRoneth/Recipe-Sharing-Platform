@@ -56,20 +56,38 @@ const UserRecipeCard: React.FC<RecipeType> = ({
     const handleClose = () => setOpen(false);
 
     const handleUpdate = async () => {
-        const updatedRecipe: RecipeType = {
-            id,
-            title: editTitle,
-            cookingtime: editCookingTime,
-            calories: editCalories,
-            rating: editRating,
-            image: editImage,
-            ingredients: editIngredients,
-            instructions: editInstructions,
-            dietaryRestrictions: editDietaryRestrictions,
-            username
-        };
+        if (
+            !editTitle ||
+            !editCookingTime ||
+            !editCalories ||
+            !editRating ||
+            !editImage ||
+            editIngredients.length === 0 ||
+            editInstructions.length === 0
+        ) {
+            Swal.fire({
+                icon: "warning",
+                title: "Missing Fields",
+                text: "Please fill in all required fields including at least one ingredient and instruction.",
+                confirmButtonColor: "#d33"
+            });
+            return;
+        }
 
         try {
+            const updatedRecipe: RecipeType = {
+                id,
+                title: editTitle,
+                cookingtime: editCookingTime,
+                calories: editCalories,
+                rating: editRating,
+                image: editImage,
+                ingredients: editIngredients,
+                instructions: editInstructions,
+                dietaryRestrictions: editDietaryRestrictions,
+                username
+            };
+
             const actionResult = await dispatch(updateRecipe(updatedRecipe));
 
             if (updateRecipe.fulfilled.match(actionResult)) {
@@ -92,9 +110,15 @@ const UserRecipeCard: React.FC<RecipeType> = ({
             }
         } catch (error) {
             console.error("Failed to update recipe:", error);
-            alert("Failed to update recipe.");
+            Swal.fire({
+                icon: "error",
+                title: "Update Error",
+                text: "An unexpected error occurred while updating the recipe.",
+                confirmButtonColor: "#d33"
+            });
         }
     };
+
 
     const handleDelete = async () => {
         try {
