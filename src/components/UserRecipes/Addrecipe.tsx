@@ -41,6 +41,17 @@ const AddRecipe = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!title || !cookingtime || !calories || !rating || !image || ingredients.length === 0 || instructions.length === 0) {
+            Swal.fire({
+                icon: "warning",
+                title: "Missing Fields",
+                text: "Please fill in all required fields including at least one ingredient and instruction.",
+                confirmButtonColor: "#d33"
+            });
+            return;
+        }
+
         try {
             const newRecipe = {
                 title,
@@ -53,6 +64,7 @@ const AddRecipe = () => {
                 username,
                 dietaryRestrictions: selectedDietaryRestrictions,
             };
+
             await dispatch(addRecipe(newRecipe));
 
             Swal.fire({
@@ -62,12 +74,18 @@ const AddRecipe = () => {
                 showConfirmButton: false,
                 timer: 1500
             });
+
             setIsModalOpen(false);
         } catch (error) {
             console.error('Error details:', error);
-            alert('Error adding recipe.');
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Something went wrong while adding the recipe!",
+            });
         }
     };
+
 
     const handleIngredientsChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const updated = [...ingredients];
